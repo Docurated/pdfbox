@@ -117,9 +117,11 @@ public class PDPixelMap extends PDXObjectImage
         BufferedImage rgbImage;
         int width = bi.getWidth();
         int height = bi.getHeight();
-        if (bi.getColorModel().hasAlpha() && bi.getAlphaRaster() != null)
+        if (bi.getColorModel().hasAlpha())
         {
-            alphaImage = extractAlphaImage(bi);
+            if (bi.getAlphaRaster() != null) {
+                alphaImage = extractAlphaImage(bi);
+            }
 
             // create RGB image without alpha
             //BEWARE: the previous solution in the history 
