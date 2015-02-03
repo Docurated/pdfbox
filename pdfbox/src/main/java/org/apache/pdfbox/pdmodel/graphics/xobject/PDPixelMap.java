@@ -117,7 +117,7 @@ public class PDPixelMap extends PDXObjectImage
         BufferedImage rgbImage;
         int width = bi.getWidth();
         int height = bi.getHeight();
-        if (bi.getColorModel().hasAlpha())
+        if (bi.getColorModel().hasAlpha() && bi.getAlphaRaster() != null)
         {
             alphaImage = extractAlphaImage(bi);
 
