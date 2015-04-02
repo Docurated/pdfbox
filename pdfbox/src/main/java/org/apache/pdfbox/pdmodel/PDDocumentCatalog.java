@@ -447,15 +447,15 @@ public class PDDocumentCatalog implements COSObjectable
     /**
      * Get the list of OutputIntents defined in the document.
      * 
-     * @return The list of PDOoutputIntent
+     * @return The list of PDOutputIntent
      */
-    public List<PDOutputIntent> getOutputIntent () {
+    public List<PDOutputIntent> getOutputIntent() {
         List<PDOutputIntent> retval = new ArrayList<PDOutputIntent>();
-        COSArray array = (COSArray)root.getItem(COSName.OUTPUT_INTENTS);
+        COSArray array = (COSArray)root.getDictionaryObject(COSName.OUTPUT_INTENTS);
         if (array!=null) {
             for (COSBase cosBase : array)
             {
-                PDOutputIntent oi = new PDOutputIntent((COSStream)cosBase);
+                PDOutputIntent oi = new PDOutputIntent((COSDictionary)cosBase);
                 retval.add(oi);
             }
         }
@@ -470,8 +470,9 @@ public class PDDocumentCatalog implements COSObjectable
      * 
      * @param outputIntent the OutputIntent to add.
      */
-    public void addOutputIntent (PDOutputIntent outputIntent) {
-        COSArray array = (COSArray)root.getItem(COSName.OUTPUT_INTENTS);
+    public void addOutputIntent(PDOutputIntent outputIntent)
+    {
+        COSArray array = (COSArray)root.getDictionaryObject(COSName.OUTPUT_INTENTS);
         if (array==null) {
             array = new COSArray();
             root.setItem(COSName.OUTPUT_INTENTS, array);
@@ -485,7 +486,8 @@ public class PDDocumentCatalog implements COSObjectable
      * @param outputIntents the list of OutputIntents, if the list is empty all
      * OutputIntents are removed.
      */
-    public void setOutputIntents (List<PDOutputIntent> outputIntents) {
+    public void setOutputIntents(List<PDOutputIntent> outputIntents)
+    {
         COSArray array = new COSArray();
         for (PDOutputIntent intent : outputIntents)
         {

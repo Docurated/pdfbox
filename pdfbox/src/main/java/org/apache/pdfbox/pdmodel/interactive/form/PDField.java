@@ -521,37 +521,34 @@ public abstract class PDField implements COSObjectable
     {
         List<COSObjectable> retval = null;
         COSArray kids = (COSArray) getDictionary().getDictionaryObject(COSName.KIDS);
+        
         if (kids != null)
         {
             List<COSObjectable> kidsList = new ArrayList<COSObjectable>();
             for (int i = 0; i < kids.size(); i++)
             {
                 COSDictionary kidDictionary = (COSDictionary) kids.getObject(i);
+                
                 if (kidDictionary == null)
                 {
-                    continue;
+                   continue;
                 }
-                COSDictionary parent = (COSDictionary) kidDictionary.getDictionaryObject(COSName.PARENT, COSName.P);
-                if (kidDictionary.getDictionaryObject(COSName.FT) != null
-                        || (parent != null && parent.getDictionaryObject(COSName.FT) != null))
+                
+                // Decide if the kid is field or a widget annotation.
+                // A field dictionary that does not have a partial field name (T entry)
+                // of its own shall not be considered a field but simply a Widget annotation.
+                if (kidDictionary.getDictionaryObject(COSName.T) != null)
                 {
                     PDField field = PDFieldFactory.createField(acroForm, kidDictionary);
+                        
                     if (field != null)
                     {
-                        kidsList.add(field);
+                       kidsList.add(field);
                     }
                 }
                 else if ("Widget".equals(kidDictionary.getNameAsString(COSName.SUBTYPE)))
                 {
                     kidsList.add(new PDAnnotationWidget(kidDictionary));
-                }
-                else
-                {
-                    PDField field = PDFieldFactory.createField(acroForm, kidDictionary);
-                    if (field != null)
-                    {
-                        kidsList.add(field);
-                    }
                 }
             }
             retval = new COSArrayList<COSObjectable>(kidsList, kids);
@@ -646,5 +643,26 @@ public abstract class PDField implements COSObjectable
     public void setActions(PDFormFieldAdditionalActions actions)
     {
         dictionary.setItem(COSName.AA, actions);
+    }
+    
+    /**
+     * Set the field type.
+     * 
+     * @param fieldType the field type string must be one of "Btn", "Ch", "Tx", "Sig"
+     */
+    protected void setFieldType(String fieldType)
+    {
+        if (fieldType.compareTo("Btn") != 0 &&
+            fieldType.compareTo("Ch") != 0 &&
+            fieldType.compareTo("Tx") != 0 &&
+            fieldType.compareTo("Sig") != 0
+                )
+        {
+            throw new IllegalArgumentException("Unknown field type given " + fieldType);
+        }
+        else
+        {
+            getDictionary().setName(COSName.FT, fieldType);
+        }
     }
 }
